@@ -18,7 +18,7 @@ jobs:
         commitMessage=$(git log -1 --pretty=%B)  # Get the commit message
         if [[ "$commitMessage" =~ https:\/\/.* ]]; then  # Check if the commit message contains a URL
           imageUrl=$(echo "$commitMessage" | grep -o 'https:\/\/.*')  # Extract URL
-          else
+        else
           echo "No URL found in commit message"
           exit 1  # Exit with error if no URL is found
         fi
