@@ -6,6 +6,7 @@ on:
       - main  # Only trigger on pushes to the main branch
     paths-ignore:  # Ignore changes to workflow files
       - '.github/workflows/**'
+      - '/*'
 
 jobs:
   update-html:
