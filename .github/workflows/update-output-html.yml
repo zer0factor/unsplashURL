@@ -13,17 +13,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Extract Image URL from Commit Message
-      run: |
-        echo "Fetching image URL from commit message"
-        imageUrl=$(git log -1 --pretty=%B | grep -o 'https:\/\/.*')  # Extracts URL from commit message
-        echo "Image URL: $imageUrl"
-        echo $imageUrl > imageUrl.txt  # Save the URL to a file
-
     - name: Update output.html
       run: |
-        echo "Updating output.html with new image URL"
-        imageUrl=$(cat imageUrl.txt)  # Read the image URL from the file
+        imageUrl=$(git log -1 --pretty=%B | grep -o 'https:\/\/.*')  # Extracts URL from commit message
+        if [ -z "$imageUrl" ]; then
+            echo "No image URL found in the commit message"
+            exit 1  # Exit the workflow with a non-zero code to indicate failure
+        fi
         echo "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Unsplash Image URL</title></head><body><p>${imageUrl}</p></body></html>" > output.html
 
     - name: Commit and push changes
