@@ -3,7 +3,7 @@ name: Update output.html
 on:
   push:
     branches:
-      - main  # Action triggers when pushing to this branch
+      - main  # Only trigger on pushes to the main branch
     paths-ignore:  # Ignore changes to workflow files
       - '.github/workflows/**'
 
@@ -15,15 +15,18 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Update output.html
+    - name: Extract Image URL from Commit Message
       run: |
         commitMessage=$(git log -1 --pretty=%B)  # Get the commit message
         if [[ "$commitMessage" =~ https:\/\/.* ]]; then  # Check if the commit message contains a URL
           imageUrl=$(echo "$commitMessage" | grep -o 'https:\/\/.*')  # Extract URL
         else
-          echo "No URL found in commit message"
           exit 1  # Exit with error if no URL is found
         fi
+
+    - name: Update output.html
+      run: |
+        imageUrl=$(cat imageUrl.txt)  # Read the image URL from the file
         echo "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Unsplash Image URL</title></head><body><p>${imageUrl}</p></body></html>" > output.html
 
     - name: Commit and push changes
