@@ -20,6 +20,7 @@ jobs:
         commitMessage=$(git log -1 --pretty=%B)  # Get the commit message
         if [[ "$commitMessage" =~ https:\/\/.* ]]; then  # Check if the commit message contains a URL
           imageUrl=$(echo "$commitMessage" | grep -o 'https:\/\/.*')  # Extract URL
+          echo $imageUrl > imageUrl.txt
         else
           exit 1  # Exit with error if no URL is found
         fi
@@ -32,5 +33,5 @@ jobs:
     - name: Commit and push changes
       run: |
         git add output.html
-        git commit -m "Update output.html with new image URL: $imageUrl"  # Commit with new image URL
+        git commit -m "Update output.html"
         git push origin main
