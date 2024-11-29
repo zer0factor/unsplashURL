@@ -1,1 +1,36 @@
+name: Update output.html
+
+on:
+  push:
+    branches:
+      - main  # Action triggers when pushing to this branch
+
+jobs:
+  update-html:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Extract Image URL from Commit Message
+      run: |
+        echo "Fetching image URL from commit message"
+        imageUrl=$(git log -1 --pretty=%B | grep -o 'https:\/\/.*')  # Extracts URL from commit message
+        echo "Image URL: $imageUrl"
+        echo $imageUrl > imageUrl.txt  # Save the URL to a file
+
+    - name: Update output.html
+      run: |
+        echo "Updating output.html with new image URL"
+        imageUrl=$(cat imageUrl.txt)  # Read the image URL from the file
+        echo "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Unsplash Image URL</title></head><body><p>${imageUrl}</p></body></html>" > output.html
+
+    - name: Commit and push changes
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        git add output.html
+        git commit -m "Update output.html with new image URL: $imageUrl"  # Commit with new image URL
+        git push origin update-output-html
 
