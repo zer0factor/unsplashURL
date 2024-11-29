@@ -15,7 +15,13 @@ jobs:
 
     - name: Update output.html
       run: |
-        imageUrl=$(git log -1 --pretty=%B | grep -o 'https:\/\/.*')  # Extracts URL from commit message
+        commitMessage=$(git log -1 --pretty=%B)  # Get the commit message
+        if [[ "$commitMessage" =~ https:\/\/.* ]]; then  # Check if the commit message contains a URL
+          imageUrl=$(echo "$commitMessage" | grep -o 'https:\/\/.*')  # Extract URL
+          else
+          echo "No URL found in commit message"
+          exit 1  # Exit with error if no URL is found
+        fi
         echo "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Unsplash Image URL</title></head><body><p>${imageUrl}</p></body></html>" > output.html
 
     - name: Commit and push changes
