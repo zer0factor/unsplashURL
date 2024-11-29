@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main  # Action triggers when pushing to this branch
+    paths-ignore:  # Ignore changes to workflow files
+      - '.github/workflows/**'
 
 jobs:
   update-html:
